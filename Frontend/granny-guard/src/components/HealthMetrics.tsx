@@ -1,8 +1,10 @@
+import HealthMetric from './HealthMetric.tsx';
 
 const HealthMetrics = () => {
     return (
-        <div>
-            
+        <div className="flex flex-row gap-2 justify-center">
+            <HealthMetric />
+            <HealthMetric />
         </div>
     );
 };
