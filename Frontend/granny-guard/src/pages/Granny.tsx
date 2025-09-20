@@ -15,13 +15,13 @@ function Granny() {
 
             </div>
             <div className="flex items-center justify-center bg-green-100">
-                Top Right
+                Personalization
             </div>
             <div className="flex items-center justify-center bg-blue-100">
-                Bottom Left
+                Reminders
             </div>
             <div className="flex items-center justify-center bg-yellow-100">
-                Bottom Right
+                Map
             </div>
         </div>
     )
