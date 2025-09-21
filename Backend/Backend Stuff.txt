@@ -1,0 +1,9 @@
+Backend Stuff:
+- POST reminder from caretaker view
+- POST picture from caretaker view (add picture name to pictureList.json
+- GET picture list for both views
+- GET granny location for both* views
+- GET other item locations for both views
+- GET time/date for both views. Change sun to other lucide icons based on time of day?
+- GET health metrics for both views (not real data). Displays the two outlier data pieces
+- GET reminder list
