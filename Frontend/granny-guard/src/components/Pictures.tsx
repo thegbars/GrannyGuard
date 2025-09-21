@@ -1,92 +1,92 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogTrigger,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter,
+  Dialog, DialogTrigger, DialogContent,
+  DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
-type PicturesProps = {
-    type: "granny" | "caretaker";
-};
+type PicturesProps = { type: "granny" | "caretaker" };
 
-const Pictures = ({ type }: PicturesProps) => {
-    const [images, setImages] = useState<string[]>([]);
-    const [index, setIndex] = useState(0);
-    const [filePreview, setFilePreview] = useState<string | null>(null);
+export default function Pictures({ type }: PicturesProps) {
+  const apiBase = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 
-    useEffect(() => {
-        fetch("/pictureList.json")
-            .then((res) => res.json())
-            .then((data: string[]) => setImages(data));
-    }, []);
+  const [images, setImages] = useState<string[]>([]);
+  const [index, setIndex] = useState(0);
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setIndex((i) => (images.length ? (i + 1) % images.length : 0));
-        }, 6000);
-        return () => clearInterval(timer);
-    }, [images]);
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        const r = await fetch(`${apiBase}/pictures`);
+        const data: string[] = await r.json();
+        setImages(data);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [apiBase]);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file && file.type === "image/png") {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setFilePreview(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+  useEffect(() => {
+    if (!images.length) return;
+    const id = setInterval(() => setIndex(i => (i + 1) % images.length), 6000);
+    return () => clearInterval(id);
+  }, [images]);
 
-    const handleAdd = () => {
-        if (filePreview) {
-            setImages((prev) => [...prev, filePreview]);
-            setFilePreview(null);
-        }
-    };
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] ?? null;
+    setFile(f);
+    setPreview(f ? URL.createObjectURL(f) : null);
+  };
 
-    if (!images.length) return null;
+  const handleUpload = async () => {
+    if (!file) return;
+    const form = new FormData();
+    form.append("file", file);
+    const r = await fetch(`${apiBase}/pictures/upload`, { method: "POST", body: form });
+    if (!r.ok) { alert(`Upload failed (HTTP ${r.status})`); return; }
+    const json = await r.json(); 
+    setImages(prev => [...prev, json.name]); 
+    setFile(null);
+    setPreview(null);
+  };
 
-    return (
-        <div className="flex flex-col items-center gap-4">
-            <img
-                src={images[index]}
-                alt={`Slide ${index + 1}`}
-                className="w-full max-w-xl rounded-md object-cover"
-            />
+  const ShowUploader = () => (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">＋ Add Picture</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Upload an image</DialogTitle>
+        </DialogHeader>
+        <Input type="file" accept="image/png,image/jpeg,image/webp" onChange={onFileChange} />
+        {preview && <img src={preview} alt="Preview" className="mt-4 w-full max-w-xs rounded-md" />}
+        <DialogFooter>
+          <Button onClick={handleUpload} disabled={!file}>Save</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
 
-            {type === "caretaker" && (
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button variant="outline">＋ Add Picture</Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Upload a PNG</DialogTitle>
-                        </DialogHeader>
-                        <Input type="file" accept="image/png" onChange={handleFileChange} />
-                        {filePreview && (
-                            <img
-                                src={filePreview}
-                                alt="Preview"
-                                className="mt-4 w-full max-w-xs rounded-md"
-                            />
-                        )}
-                        <DialogFooter>
-                            <Button onClick={handleAdd} disabled={!filePreview}>
-                                Save
-                            </Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-            )}
-        </div>
-    );
-};
+  return (
+    <div className="flex flex-col items-center gap-4">
+      {loading ? (
+        <p className="text-sm text-gray-500">Loading pictures…</p>
+      ) : images.length ? (
+        <img
+          src={`${apiBase}/media/${images[index]}`}
+          alt={`Slide ${index + 1}`}
+          className="w-full max-w-xl rounded-md object-cover"
+        />
+      ) : (
+        <p className="text-sm text-gray-500">No pictures yet.</p>
+      )}
 
-export default Pictures;
+      {type === "caretaker" && <ShowUploader />}
+    </div>
+  );
+}

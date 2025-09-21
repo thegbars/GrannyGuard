@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "text": "Take morning meds",
+    "due_at": null,
+    "created_at": "2025-09-21T07:09:42.305175Z"
+  },
+  {
+    "id": 2,
+    "text": "Don't drink too much caffeine",
+    "due_at": "2025-09-21T08:35:00.000Z",
+    "created_at": "2025-09-21T08:34:36.535125+00:00",
+    "urgency": "urgent"
+  }
+]
