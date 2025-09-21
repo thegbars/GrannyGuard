@@ -1,12 +1,19 @@
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
+import { useState } from "react";
 import Reminder from "@/components/Reminder";
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogTrigger,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+
+type ReminderListProps = {
+    type: "granny" | "caretaker";
+};
 
 const reminders = [
     { title: "Take meds", time: "8:00 AM", date: "Sept 21", type: "urgent" },
@@ -14,26 +21,68 @@ const reminders = [
     { title: "Check glucose", time: "6:00 PM", date: "Sept 23", type: "urgent" },
 ];
 
-const ReminderList = () => (
-    <div className="p-6 ">
-        <p className="text-2xl font-bold">Reminders</p>
-        <Table>
-            <TableHeader>
-                <TableRow className="border-b border-black">
-                    <TableHead className="text-lg"></TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {reminders.map((r, i) => (
-                    <TableRow key={i} className="border-b border-black">
-                        <TableCell>
-                            <Reminder {...r} />
-                        </TableCell>
-                    </TableRow>
-                ))}
-            </TableBody>
-        </Table>
-    </div>
-);
+export default function ReminderList({ type }: ReminderListProps) {
+    const [title, setTitle] = useState("");
+    const [time, setTime] = useState("");
+    const [date, setDate] = useState("");
 
-export default ReminderList;
+    return (
+        <div>
+            {reminders.map((r, i) => (
+                <div>
+                    <div key={i} className="flex justify-between items-center">
+                        <Reminder {...r} />
+                    </div>
+                    <div className="h-2 w-full mb-2 border-b-2 border-blue-500"></div>
+                </div>
+            ))}
+
+            {type === "caretaker" && (
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button
+                            variant="secondary"
+                            className="w-full h-12 text-xl border-2 border-black rounded-md"
+                        >
+                            ＋ Add Reminder
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Add Reminder</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                            <Input
+                                placeholder="Title"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                            />
+                            <Input
+                                placeholder="Time"
+                                value={time}
+                                onChange={(e) => setTime(e.target.value)}
+                            />
+                            <Input
+                                placeholder="Date"
+                                value={date}
+                                onChange={(e) => setDate(e.target.value)}
+                            />
+                        </div>
+                        <DialogFooter>
+                            <Button
+                                onClick={() => {
+                                    console.log({ title, time, date });
+                                    setTitle("");
+                                    setTime("");
+                                    setDate("");
+                                }}
+                            >
+                                Save
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+            )}
+        </div>
+    );
+}
