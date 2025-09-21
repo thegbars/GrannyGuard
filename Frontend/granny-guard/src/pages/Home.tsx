@@ -10,6 +10,11 @@ function Home() {
                 <Link to="/granny"><Button>Granny View</Button></Link>
                 <Link to="/caretaker"><Button>Caretaker View</Button></Link>
             </div>
+
+            <p className="text-xs text-muted-foreground">
+                Grandma icon by Freepik – <a href="https://www.flaticon.com/free-icons/grandma" target="_blank" rel="noopener noreferrer">Flaticon</a>
+            </p>
+
         </div>
     )
 }
