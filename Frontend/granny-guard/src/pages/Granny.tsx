@@ -1,7 +1,8 @@
 import Greeter from '@/components/Greeter.tsx';
 import HealthMetrics from '@/components/HealthMetrics.tsx';
 import ReminderList from '@/components/ReminderList.tsx';
-import Pictures from '@/components/Pictures';
+import Pictures from '@/components/Pictures.tsx';
+import Map from '@/components/Map.tsx';
 
 
 import { Separator } from "@/components/ui/separator"
@@ -25,7 +26,7 @@ function Granny() {
                 <ReminderList />
             </div>
             <div className="flex items-center justify-center bg-yellow-100">
-                Map
+                <Map x={192} y={195} />
             </div>
         </div>
     )
