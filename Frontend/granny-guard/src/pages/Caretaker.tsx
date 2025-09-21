@@ -6,6 +6,12 @@ import Map from '@/components/Map.tsx';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 
 function Caretaker() {
+    const overlays = [
+        { x: 192, y: 195, src: "/old-woman.png", key: "granny" },
+        { x: 120, y: 220, src: "/pill-icon.png", size: 20, key: "pills" },
+        { x: 50, y: 100, src: "/keys-icon.png", key: "keys" },
+    ];
+
     return (
         <div className="bg-slate-100 h-screen w-screen p-4">
             <div className="grid grid-cols-2 grid-rows-[1fr_1.2fr] gap-4 h-full">
@@ -64,7 +70,12 @@ function Caretaker() {
                         Location Map
                     </CardHeader>
                     <CardContent className="flex justify-center w-full">
-                        <Map x={192} y={195} />
+                        <Map
+                            overlays={overlays}
+                            width={200}
+                            height={250}
+                            className="max-w-[200px] max-h-[250px] w-full h-auto"
+                        />
                     </CardContent>
                 </Card>
 
